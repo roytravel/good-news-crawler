@@ -7,13 +7,11 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 from slack import Slack
 
-
 class Tool(object):
     def __init__(self):
         self.fPath = "./exclude/news-list.txt"
         self.conn = pymysql.connect(host='localhost', user='root', password=os.environ['MYSQL_PASSWORD'], db='good-news', charset='utf8mb4')
         self.cursor = self.conn.cursor()
-
 
     def insertMysql(self, url, title, time):
         query = "INSERT INTO coinness(title, post_time, url, upload_time) VALUES(%s, %s, %s, %s)"
@@ -21,21 +19,18 @@ class Tool(object):
         self.conn.commit()
         print ('[*] Success : {}'.format(title))
 
-
     def checkDuple(self, title, url):
         query = "SELECT * FROM coinness WHERE title = %s and url = %s"
         response = self.cursor.execute(query, (title, url))
-        
+
         if response == 0:
             return False
         else:
             return True
   
 def main():
-    
     S = Slack()
     T = Tool()
-
     URL = "https://kr.coinness.com"
 
     response = requests.get(URL)
@@ -58,7 +53,6 @@ def main():
                         titleValue = title.text.replace('\n','').replace("                                       ","").replace('                      ','').replace("                  ","")
                         titleValue = titleValue[6:]
                         # print ("[*] {}".format(titleValue))
-                        
 
                 # get post time
                 for time in li.findAll("span", {"class":"newstime"}):
