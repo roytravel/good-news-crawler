@@ -4,12 +4,12 @@ from slack_sdk.errors import SlackApiError
 
 class Slack(object):
     def __init__(self):
-        client = WebClient(token=os.environ['SLACK_BOT_TOKEN'])
+        self.client = WebClient(token=os.environ['SLACK_BOT_TOKEN'])
 
-    def send(self):
+    def send(self, title, data):
         try:
-            response = client.chat_postMessage(channel='#good-news', text="[*] Slack bot test")
-            assert response["message"]["text"] == "[*] Slack bot test"
+            response = self.client.chat_postMessage(channel='#good-news', text="[Title] {}\n\n{}".format(title, data))
+            assert response["message"]["text"] == "[Title] {}\n\n{}".format(title, data)
 
         except SlackApiError as e:
             # You will get a SlackApiError if "ok" is False
