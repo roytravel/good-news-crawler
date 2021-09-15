@@ -34,6 +34,8 @@ def main():
     URL = ["https://coincode.kr/archives/category/news", "https://coincode.kr/archives/category/blockchain"]
 
     for idx in range(len(URL)):
+        count = 0
+        already = False
         response = requests.get(URL[idx])
         if response.status_code == 200:
             res = response.text
@@ -44,8 +46,6 @@ def main():
                 for content in thumbNail.findAll('a', href=True):
                     urlValue = content['href']
                     titleValue = content['title']
-                    print (f"[*] {urlValue}")
-                    print (f"[*] {titleValue}")
 
                     innerResponse = requests.get(urlValue)
                     if innerResponse.status_code == 200:
@@ -53,19 +53,27 @@ def main():
                         innerSoup = BeautifulSoup(innerRes, 'html.parser')
                         timeValue = innerSoup.find('time', {'class':'entry-date updated td-module-date'})
                         timeValue = timeValue["datetime"].strip("+09:00").replace("T", " ")
-                        print (f"[*] {timeValue}")
-                    
-                    print ('\n')
 
-                    flag = T.checkDuple(titleValue, urlValue)
+                    dupFlag = T.checkDuple(titleValue, urlValue)
                     category = "news" if idx == 0 else "blockchain"
 
-                    if flag == False:
+                    if dupFlag == False:
+                        print (f"[*] {urlValue}")
+                        print (f"[*] {titleValue}")
+                        print (f"[*] {timeValue}")
+                        print ('\n')
+
                         T.insertMysql(titleValue, timeValue, urlValue, category)
                         S.send(titleValue, timeValue, urlValue)
 
                     else:
+                        count = count + 1
+                        if count == 3:
+                            already = True
                         print (f"[!] Content Duplicated : {titleValue}")
+
+                if already:
+                    break
 
 
 if __name__ == "__main__":
