@@ -8,8 +8,8 @@ class Slack(object):
 
     def send(self, url, title, time):
         try:
-            response = self.client.chat_postMessage(channel='#good-news', text="{}\n{}".format(url, title))
-            #assert response["message"]["text"] == "{}\n{}".format(url, title)
+            response = self.client.chat_postMessage(channel='#good-news', text="{} ({})\n{}".format(url, time, title))
+            #assert response["message"]["text"] == "{} ({})\n{}".format(url, time, title)
 
         except SlackApiError as e:
             # You will get a SlackApiError if "ok" is False
