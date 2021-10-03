@@ -7,6 +7,7 @@ import pyupbit
 from upbitpy import Upbitpy
 import time
 from datetime import datetime, timedelta
+from slack import Slack
 """ Reference
 [1] https://github.com/inasie/upbitpy
 [2] https://wikidocs.net/112460
@@ -62,7 +63,7 @@ def get_delta_percent(symbols, shork_date, current_date):
     
     for symbol in symbols:
         try:
-            time.sleep(0.5) # for preventing erorr about JSON
+            time.sleep(0.3) # for preventing erorr about JSON
             df = pyupbit.get_ohlcv(symbol)
             df = df.reset_index()
             shork_price = float(df[df['index']==shork_date]['close'])
@@ -89,13 +90,21 @@ def current_day():
             
 def show_symbol_n_percent(percents, std_percent, pair):
     std_percent = -13 # 하락장 전 가격 대비 하락장 후 가격 차 퍼센트
+    under_valued_coin = ""
     for key, value in sorted(percents.items(), key=operator.itemgetter(1)):
         if value < std_percent:
-            print (f'[*] {value}% : {pair[key]}')
+            under_valued_coin += f"[*] {value}% : {pair[key]}\n"
+            #print (f'[*] {value}% : {pair[key]}')
     
+    print (under_valued_coin)
+    """
+    Send under valued coin using slack
+    S.method(under_valued_coin)
+    """
 
 def main():
     U = Upbit()
+    #S = Slack()
     symbols, pair = U.coin_symbols()
     #U.coin_current_price(symbols)
     percents, std_percent = get_delta_percent(symbols, "2021-09-18", current_day())
