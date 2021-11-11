@@ -6,9 +6,10 @@ class Slack(object):
     def __init__(self):
         self.client = WebClient(token=os.environ['SLACK_BOT_TOKEN'])
 
-    def send(self, url, title, time):
+    def send(self, title, time, url):
         try:
-            response = self.client.chat_postMessage(channel='#good-news', text="{} ({})\n{}".format(url, time, title))
+            time = time.strip('\n')
+            response = self.client.chat_postMessage(channel='#good-news', text="{}\n{}\n{}".format(time, title, url))
             #assert response["message"]["text"] == "{} ({})\n{}".format(url, time, title)
 
         except SlackApiError as e:

@@ -9,7 +9,6 @@ from slack import Slack
 
 class Tool(object):
     def __init__(self):
-        self.fPath = "./exclude/news-list.txt"
         self.conn = pymysql.connect(host='localhost', user='root', password=os.environ['MYSQL_PASSWORD'], db='good-news', charset='utf8mb4')
         self.cursor = self.conn.cursor()
 
